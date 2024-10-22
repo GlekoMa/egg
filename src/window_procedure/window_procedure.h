@@ -1,0 +1,8 @@
+#ifndef WINDOW_PROCEDURE_H
+#define WINDOW_PROCEDURE_H
+
+#include <windows.h>
+
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+#endif // WINDOW_PROCEDURE_H

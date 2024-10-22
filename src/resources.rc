@@ -1,0 +1,5 @@
+#include "common/common.h"
+
+IDI_APPICON ICON "../data/egg.ico"
+IDR_CSVFILE RCDATA "../data/ldoce5.csv"
+IDR_WORDLIST RCDATA "../data/wordlist.txt"
