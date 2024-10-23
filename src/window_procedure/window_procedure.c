@@ -1,12 +1,10 @@
 #include "../common/common.h"
 #include "../dictionary/dictionary.h"
+#include "../fuzzy_match/fuzzy_match.h"
 #include <windows.h>
 #include <commctrl.h>
 #include <stdbool.h>
 #include <wchar.h>
-
-#define MAX_TEXT_LENGTH 4096
-#define MAX_DISPLAY_ITEMS 50
 
 HWND editControl, staticControl, listViewControl;
 NOTIFYICONDATAW nid;
@@ -46,8 +44,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
 
         case IDM_ESC:
-            // PostQuitMessage(0); // NOTE: For debug
-            ShowWindow(hwnd, SW_HIDE); // NOTE: For release
+            //PostQuitMessage(0); // For debug
+            ShowWindow(hwnd, SW_HIDE); // For release
             break;
 
         case IDM_CLEAR:
@@ -219,35 +217,19 @@ void UpdateListView()
     }
 
     // Find not all (because of MAX_DISPLAY_ITEMS) matched words
-    /// TODO:
-    ///     1. This is a poor way to improve user's life
-    ///     2. Should not be MAX_WORDS, should be real words count
     LVITEMW lvi = { 0 };
     lvi.mask = LVIF_TEXT;
     lvi.iSubItem = 0;
 
-    int itemCount = 0;
-    /// first: add items with matching first letter
-    for (size_t i = 0; i < MAX_WORDS && itemCount < MAX_DISPLAY_ITEMS; i++) {
-        if (towlower(g_allWords[i][0]) == towlower(input[0]) && wcsstr(g_allWords[i], input) != NULL) {
-            lvi.iItem = itemCount;
-            lvi.pszText = g_allWords[i];
-            SendMessageW(listViewControl, LVM_INSERTITEMW, 0, (LPARAM)&lvi);
-            itemCount++;
-        }
+    int index[MAX_WORDS] = { 0 };
+    fuzzy_match(input, g_allWords, index);
+    for (int i = 0; index[i] != -1; i++) {
+        lvi.iItem = i;
+        lvi.pszText = g_allWords[index[i]];
+        SendMessageW(listViewControl, LVM_INSERTITEMW, 0, (LPARAM)&lvi);
     }
 
-    /// second: add remaining matching items
-    for (size_t i = 0; i < MAX_WORDS && itemCount < MAX_DISPLAY_ITEMS; i++) {
-        if (wcsstr(g_allWords[i], input) != NULL && towlower(g_allWords[i][0]) != towlower(input[0])) {
-            lvi.iItem = itemCount;
-            lvi.pszText = g_allWords[i];
-            SendMessageW(listViewControl, LVM_INSERTITEMW, 0, (LPARAM)&lvi);
-            itemCount++;
-        }
-    }
-
-    // Search dictionary and display the result
+    // Search selected word in dictionary and display the result
     if (ListView_GetItemCount(listViewControl) > 0) {
         ListView_SetItemState(listViewControl, 0, LVIS_SELECTED, LVIS_SELECTED);
         HandleListViewSelection(showTranslationFlag);

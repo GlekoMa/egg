@@ -28,6 +28,9 @@
 #define MAX_WORDS 30000
 #define MAX_WORD_LENGTH 64
 
+#define MAX_TEXT_LENGTH 4096
+#define MAX_DISPLAY_ITEMS 50
+
 extern wchar_t g_csvData[MAX_CSV_SIZE];
 extern wchar_t g_allWords[MAX_WORDS][MAX_WORD_LENGTH];
 extern const wchar_t* g_tips;

@@ -20,6 +20,7 @@ $SourceFiles = @(
     "src\main.c",
     "src\dictionary\dictionary.c",
     "src\dictionary\initializer.c",
+    "src\fuzzy_match\fuzzy_match.c",
     "src\window_procedure\window_procedure.c",
     "src\common\common.c",
     "build\resources.res"
