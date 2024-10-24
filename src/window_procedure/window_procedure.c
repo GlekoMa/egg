@@ -108,6 +108,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             // recover the old clipboard
             SetClipboardText(oldClipboardText);
             // set the new clipboard text (selected word) to edit control to search
+            if (wcscmp(pszText, oldClipboardText) == 0 || wcslen(pszText) == 0)
+                return 0;
             SetWindowTextW(editControl, pszText);
             ShowWindow(hwnd, SW_SHOW);
             SetForegroundWindow(hwnd);
