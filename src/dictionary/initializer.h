@@ -3,7 +3,7 @@
 
 #include <windows.h>
 
-void LoadDictionary(HMODULE hModule, LPCWSTR lpName, LPCWSTR lpType);
+void LoadDictionary();
 void LoadWordList();
 
 #endif // RESOURCE_LOADER_H

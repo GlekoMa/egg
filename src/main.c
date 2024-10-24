@@ -63,7 +63,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
         NULL, NULL, hInstance, NULL);
 
     // Load dictionary resource
-    LoadDictionary(GetModuleHandleW(NULL), MAKEINTRESOURCEW(IDR_CSVFILE), (LPCWSTR)RT_RCDATA);
+    LoadDictionary();
     LoadWordList();
 
     // Run the message loop.

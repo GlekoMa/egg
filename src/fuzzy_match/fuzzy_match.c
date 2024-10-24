@@ -4,7 +4,8 @@
 /// TODO:
 ///     1. This is a poor way to improve user's life
 ///     2. Should not be MAX_WORDS, should be real words count
-void fuzzy_match(wchar_t* search, wchar_t all_words[MAX_WORDS][MAX_WORD_LENGTH], int idx[MAX_WORDS]) {
+void FuzzyMatch(wchar_t* search, wchar_t all_words[MAX_WORDS][MAX_WORD_LENGTH], int idx[MAX_WORDS])
+{
     // Init idx to -1
     for (int i = 0; i < MAX_WORDS; i++)
         idx[i] = -1;

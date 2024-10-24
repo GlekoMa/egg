@@ -1,5 +1,6 @@
 #include "common.h"
 #include <windows.h>
+#include <wchar.h>
 
 wchar_t g_csvData[MAX_CSV_SIZE] = { 0 };
 wchar_t g_allWords[MAX_WORDS][MAX_WORD_LENGTH] = { 0 };

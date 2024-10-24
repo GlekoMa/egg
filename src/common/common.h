@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <windows.h>
+#include <wchar.h>
 
 #define APPNAME L"Dictionary"
 

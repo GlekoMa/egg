@@ -1,5 +1,6 @@
 #include "../common/common.h"
 #include <windows.h>
+#include <wchar.h>
 
 void LoadDictionary()
 {
@@ -10,6 +11,8 @@ void LoadDictionary()
 
     DWORD dwSize = SizeofResource(hInstance, hRes);
     memcpy(g_csvData, lpRes, dwSize);
+    // NOTE: Somehow, there will be a space at the first character, so we omit it
+    g_csvData[0] = '\n';
     g_csvData[dwSize / sizeof(wchar_t)] = L'\0';
 }
 
@@ -21,8 +24,9 @@ void LoadWordList()
     DWORD dwSize = SizeofResource(hInstance, hRes);
     const wchar_t* data = (const wchar_t*)LockResource(hData);
 
+    // NOTE: Somehow, there will be a space at the first character, so we init `start` to `data + 1`
     const wchar_t* end = data + (dwSize / sizeof(wchar_t));
-    const wchar_t* start = data;
+    const wchar_t* start = data + 1;
 
     int count = 0;
     while (start < end && count < MAX_WORDS) {

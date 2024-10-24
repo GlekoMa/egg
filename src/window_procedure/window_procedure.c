@@ -44,8 +44,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
 
         case IDM_ESC:
-            //PostQuitMessage(0); // For debug
-            ShowWindow(hwnd, SW_HIDE); // For release
+            PostQuitMessage(0); // For debug
+            // ShowWindow(hwnd, SW_HIDE); // For release
             break;
 
         case IDM_CLEAR:
@@ -138,7 +138,7 @@ void CreateTrayIcon(HWND hwnd)
     nid.uID = 1;
     nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
     nid.uCallbackMessage = WM_SYSICON;
-    nid.hIcon = LoadIconW(GetModuleHandleW(NULL), MAKEINTRESOURCEW(1));
+    nid.hIcon = LoadIconW(GetModuleHandleW(NULL), MAKEINTRESOURCEW(IDI_APPICON));
     wcscpy_s(nid.szTip, sizeof(nid.szTip) / sizeof(wchar_t), APPNAME);
     Shell_NotifyIconW(NIM_ADD, &nid);
 }
@@ -222,7 +222,7 @@ void UpdateListView()
     lvi.iSubItem = 0;
 
     int index[MAX_WORDS] = { 0 };
-    fuzzy_match(input, g_allWords, index);
+    FuzzyMatch(input, g_allWords, index);
     for (int i = 0; index[i] != -1; i++) {
         lvi.iItem = i;
         lvi.pszText = g_allWords[index[i]];

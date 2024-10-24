@@ -3,8 +3,8 @@ $CommonCompilerFlags = @("/nologo", "/W4")
 $DebugFlags = @("/Od", "/Zi")
 $ReleaseFlags = @("/O2")
 
-#$CompilerFlags = $CommonCompilerFlags + $DebugFlags
-$CompilerFlags = $CommonCompilerFlags + $ReleaseFlags
+$CompilerFlags = $CommonCompilerFlags + $DebugFlags
+#$CompilerFlags = $CommonCompilerFlags + $ReleaseFlags
 
 # --- Set links ---
 $SystemLibs = @("user32.lib", "gdi32.lib", "shell32.lib", "dwmapi.lib", "comctl32.lib")
