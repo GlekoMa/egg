@@ -17,7 +17,8 @@ void ToggleWindowVisibility(HWND hwnd);
 void HandleListViewSelection(bool showTranslation);
 void UpdateListView();
 void SendCtrlC();
-void GetClipboardText();
+void GetClipboardText(wchar_t* pszText, size_t textSize);
+void SetClipboardText(wchar_t* text);
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -96,9 +97,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_TIMER:
         if (wParam == MSG_TIMER) {
             KillTimer(hwnd, MSG_TIMER);
+            // backup old clipboard text
+            wchar_t oldClipboardText[1024] = { 0 };
+            GetClipboardText(oldClipboardText, 1024);
+            // send ctrl-c to copy selected word to clipboard and save it
             SendCtrlC();
             Sleep(25);
-            GetClipboardText();
+            wchar_t pszText[MAX_WORD_LENGTH] = { 0 };
+            GetClipboardText(pszText, MAX_WORD_LENGTH);
+            // recover the old clipboard
+            SetClipboardText(oldClipboardText);
+            // set the new clipboard text (selected word) to edit control to search
+            SetWindowTextW(editControl, pszText);
             ShowWindow(hwnd, SW_SHOW);
             SetForegroundWindow(hwnd);
         }
@@ -304,15 +314,38 @@ void SendCtrlC()
     SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
 }
 
-void GetClipboardText()
+void GetClipboardText(wchar_t* pszText, size_t textSize)
 {
     if (OpenClipboard(NULL)) {
         HANDLE hData = GetClipboardData(CF_UNICODETEXT);
         if (hData != NULL) {
-            wchar_t* pszText = GlobalLock(hData);
-            if (pszText != NULL) {
-                SetWindowTextW(editControl, pszText);
+            wchar_t* pData = GlobalLock(hData);
+            if (pData != NULL) {
+                size_t length = wcslen(pData);
+                if (length >= textSize) {
+                    length = textSize - 1;
+                }
+                wcsncpy_s(pszText, textSize, pData, length);
+                pszText[textSize - 1] = L'\0';
                 GlobalUnlock(hData);
+            }
+        }
+        CloseClipboard();
+    }
+}
+
+void SetClipboardText(wchar_t* text)
+{
+    if (OpenClipboard(NULL)) {
+        // EmptyClipboard(); // Would Windows retain the history of clipboard?
+        size_t textLength = wcslen(text) + 1; // +1 for NULL terminator
+        HGLOBAL hGlobal = GlobalAlloc(GMEM_MOVEABLE, textLength * sizeof(wchar_t));
+        if (hGlobal) {
+            wchar_t* pGlobal = (wchar_t*)GlobalLock(hGlobal);
+            if (pGlobal) {
+                wmemcpy(pGlobal, text, textLength);
+                GlobalUnlock(hGlobal);
+                SetClipboardData(CF_UNICODETEXT, hGlobal);
             }
         }
         CloseClipboard();

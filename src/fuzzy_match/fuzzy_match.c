@@ -25,7 +25,7 @@ void TrimWhitespace(wchar_t* str)
 /// TODO:
 ///     1. This is a poor way to improve user's life
 ///     2. Should not be MAX_WORDS, should be real words count
-void FuzzyMatch(wchar_t* search, wchar_t all_words[MAX_WORDS][MAX_WORD_LENGTH], int idx[MAX_WORDS])
+void FuzzyMatch(wchar_t* search, wchar_t (*all_words)[MAX_WORD_LENGTH], int* idx)
 {
     TrimWhitespace(search);
 
