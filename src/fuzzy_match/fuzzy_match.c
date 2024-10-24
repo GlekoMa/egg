@@ -1,11 +1,34 @@
 #include "../common/common.h"
 #include <wchar.h>
 
+void TrimWhitespace(wchar_t* str)
+{
+    wchar_t* start = str;
+
+    while (*start != '\0' && iswspace(*start))
+        start++;
+
+    if (*start == '\0') {
+        str[0] = '\0';
+        return;
+    }
+
+    wchar_t* end = str + wcslen(str) - 1;
+    while (end > start && iswspace(*end))
+        end--;
+
+    size_t length = end - start + 1;
+    memmove(str, start, length);
+    str[length] = '\0';
+}
+
 /// TODO:
 ///     1. This is a poor way to improve user's life
 ///     2. Should not be MAX_WORDS, should be real words count
 void FuzzyMatch(wchar_t* search, wchar_t all_words[MAX_WORDS][MAX_WORD_LENGTH], int idx[MAX_WORDS])
 {
+    TrimWhitespace(search);
+
     // Init idx to -1
     for (int i = 0; i < MAX_WORDS; i++)
         idx[i] = -1;
