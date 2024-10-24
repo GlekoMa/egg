@@ -3,8 +3,8 @@ $CommonCompilerFlags = @("/nologo", "/W4")
 $DebugFlags = @("/Od", "/Zi")
 $ReleaseFlags = @("/O2")
 
-$CompilerFlags = $CommonCompilerFlags + $DebugFlags
-#$CompilerFlags = $CommonCompilerFlags + $ReleaseFlags
+#$CompilerFlags = $CommonCompilerFlags + $DebugFlags
+$CompilerFlags = $CommonCompilerFlags + $ReleaseFlags
 
 # --- Set links ---
 $SystemLibs = @("user32.lib", "gdi32.lib", "shell32.lib", "dwmapi.lib", "comctl32.lib")
@@ -22,6 +22,7 @@ $SourceFiles = @(
     "src\dictionary\initializer.c",
     "src\fuzzy_match\fuzzy_match.c",
     "src\window_procedure\window_procedure.c",
+    "src\window_procedure\keyboard_mouse_procedure.c",
     "src\common\common.c",
     "build\resources.res"
 )

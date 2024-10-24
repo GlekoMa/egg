@@ -17,6 +17,8 @@
 #define ID_STATIC 2
 #define ID_LISTVIEW 3
 
+#define MSG_TIMER 1
+
 #define HOTKEY_ID 1
 
 #define IDM_ESC 101
@@ -32,6 +34,9 @@
 #define MAX_TEXT_LENGTH 4096
 #define MAX_DISPLAY_ITEMS 50
 
+extern HWND g_hwnd;
+extern HHOOK g_hKeyboardHook;
+extern HHOOK g_hMouseHook;
 extern wchar_t g_csvData[MAX_CSV_SIZE];
 extern wchar_t g_allWords[MAX_WORDS][MAX_WORD_LENGTH];
 extern const wchar_t* g_tips;

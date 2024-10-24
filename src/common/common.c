@@ -11,4 +11,5 @@ const wchar_t* g_tips = L" Tips: \r\n"
                         L" - <esc> to hide me.\r\n"
                         L" - <tab> to switch Chinese & English mode.\r\n"
                         L" - <ctrl-l> to clear the input.\r\n"
-                        L" - <ctrl+p/n> to select previous/next word.";
+                        L" - <ctrl+p/n> to select previous/next word.\r\n"
+                        L" - <ctrl-double_click> a word in other app to search it.";

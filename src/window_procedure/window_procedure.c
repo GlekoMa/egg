@@ -16,6 +16,8 @@ void CreateControls(HWND hwnd);
 void ToggleWindowVisibility(HWND hwnd);
 void HandleListViewSelection(bool showTranslation);
 void UpdateListView();
+void SendCtrlC();
+void GetClipboardText();
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -44,8 +46,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
 
         case IDM_ESC:
-            PostQuitMessage(0); // For debug
-            // ShowWindow(hwnd, SW_HIDE); // For release
+            // PostQuitMessage(0); // For debug
+            ShowWindow(hwnd, SW_HIDE); // For release
             break;
 
         case IDM_CLEAR:
@@ -87,6 +89,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_HOTKEY:
         if (wParam == HOTKEY_ID) {
             ToggleWindowVisibility(hwnd);
+        }
+        return 0;
+
+    // Handle `ctrl-double_click`. TIMER is created by keyboard & mouse hooks
+    case WM_TIMER:
+        if (wParam == MSG_TIMER) {
+            KillTimer(hwnd, MSG_TIMER);
+            SendCtrlC();
+            Sleep(25);
+            GetClipboardText();
+            ShowWindow(hwnd, SW_SHOW);
+            SetForegroundWindow(hwnd);
         }
         return 0;
 
@@ -267,4 +281,40 @@ void HandleListViewSelection(bool showTranslation)
     *pDest = L'\0';
 
     SetWindowTextW(staticControl, szFormattedText);
+}
+
+void SendCtrlC()
+{
+    INPUT inputs[4] = {};
+
+    inputs[0].type = INPUT_KEYBOARD;
+    inputs[0].ki.wVk = VK_LCONTROL;
+
+    inputs[1].type = INPUT_KEYBOARD;
+    inputs[1].ki.wVk = 'C';
+
+    inputs[2].type = INPUT_KEYBOARD;
+    inputs[2].ki.wVk = VK_LCONTROL;
+    inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+
+    inputs[3].type = INPUT_KEYBOARD;
+    inputs[3].ki.wVk = 'C';
+    inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+
+    SendInput(ARRAYSIZE(inputs), inputs, sizeof(INPUT));
+}
+
+void GetClipboardText()
+{
+    if (OpenClipboard(NULL)) {
+        HANDLE hData = GetClipboardData(CF_UNICODETEXT);
+        if (hData != NULL) {
+            wchar_t* pszText = GlobalLock(hData);
+            if (pszText != NULL) {
+                SetWindowTextW(editControl, pszText);
+                GlobalUnlock(hData);
+            }
+        }
+        CloseClipboard();
+    }
 }

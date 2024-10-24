@@ -1,7 +1,12 @@
 #include "common/common.h"
 #include "dictionary/initializer.h"
 #include "window_procedure/window_procedure.h"
+#include "window_procedure/keyboard_mouse_procedure.h"
 #include <windows.h>
+
+HWND g_hwnd = NULL;
+HHOOK g_hKeyboardHook = NULL;
+HHOOK g_hMouseHook = NULL;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
@@ -35,6 +40,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     };
     hAccel = CreateAcceleratorTableW(accel, 5);
 
+    // Set keyboard & mouse hook
+    g_hKeyboardHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, NULL, 0);
+    g_hMouseHook = SetWindowsHookEx(WH_MOUSE_LL, MouseProc, NULL, 0);
+
     // Register the window class
     WNDCLASSW wc = { 0 };
     wc.lpfnWndProc = WndProc;
@@ -53,7 +62,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     int yPos = workArea.bottom - windowHeight - 10;
 
     // Create the window
-    HWND hwnd = CreateWindowExW(
+    g_hwnd = CreateWindowExW(
         WS_EX_TOOLWINDOW,
         wc.lpszClassName,
         L"En-Zh Dictionary",
@@ -69,13 +78,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     // Run the message loop.
     MSG msg = { 0 };
     while (GetMessageW(&msg, NULL, 0, 0)) {
-        if (!TranslateAcceleratorW(hwnd, hAccel, &msg)) {
+        if (!TranslateAcceleratorW(g_hwnd, hAccel, &msg)) {
             TranslateMessage(&msg);
             DispatchMessageW(&msg);
         }
     }
 
     // Clean
+    UnhookWindowsHookEx(g_hMouseHook);
+    UnhookWindowsHookEx(g_hKeyboardHook);
     DestroyAcceleratorTable(hAccel);
     CloseHandle(hMutex);
     return 0;
